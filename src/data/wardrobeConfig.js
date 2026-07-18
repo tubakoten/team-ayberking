@@ -69,6 +69,7 @@ export const WARDROBE_ITEMS = {
     {
       "id": "top_white_tank",
       "name": "Beyaz Atlet",
+      "zIndex": 22,
       "image": "/assets/character/top/top_white_tank.png",
       "transform": {
         "top": 18.3,
@@ -79,6 +80,7 @@ export const WARDROBE_ITEMS = {
     {
       "id": "top_fein_mesh",
       "name": "Fileli Üst",
+      "zIndex": 22,
       "image": "/assets/character/top/top_fein_mesh.png",
       "transform": {
         "top": 17.7,
