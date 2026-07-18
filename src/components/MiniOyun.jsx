@@ -489,14 +489,19 @@ export default function MiniOyun() {
   }, [asama])
 
   useEffect(() => {
+    function yaziYaziliyorMu(e) {
+      const etiket = e.target?.tagName
+      return etiket === 'INPUT' || etiket === 'TEXTAREA' || e.target?.isContentEditable
+    }
     function tusBas(e) {
-      if (e.repeat) return
+      if (e.repeat || yaziYaziliyorMu(e)) return
       if (e.code === 'Space' || e.code === 'ArrowUp') {
         e.preventDefault()
         basisBaslat()
       }
     }
     function tusBirak(e) {
+      if (yaziYaziliyorMu(e)) return
       if (e.code === 'Space' || e.code === 'ArrowUp') {
         e.preventDefault()
         basisBitir()
