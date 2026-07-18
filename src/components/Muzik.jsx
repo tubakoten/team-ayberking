@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase, supabaseYapilandirildi } from '../supabaseClient'
 
 const favoriler = [
   { tip: 'youtube', baslik: 'FE!N', altYazi: 'Final A Grubu', href: 'https://www.youtube.com/watch?v=XXr5slkOiAI', gorsel: 'https://img.youtube.com/vi/XXr5slkOiAI/hqdefault.jpg' },
   { tip: 'youtube', baslik: 'Cakkıdı', altYazi: 'Final A Grubu', href: 'https://www.youtube.com/watch?v=ls7_Km5YTDc', gorsel: 'https://img.youtube.com/vi/ls7_Km5YTDc/hqdefault.jpg' },
   { tip: 'youtube', baslik: "Killin' It Girl", altYazi: 'Final A Grubu', href: 'https://www.youtube.com/watch?v=FATJtBwyptM', gorsel: 'https://img.youtube.com/vi/FATJtBwyptM/hqdefault.jpg' },
-  { tip: 'instagram', baslik: 'İkiz Dingiller (with Uarda)', altYazi: 'Reels', href: 'https://www.instagram.com/reel/DZsT_YtzTlN/', gorsel: '/ikiz-dingiller.jpg' },
+  { tip: 'instagram', baslik: 'İkiz Dingiller', altYazi: 'Reels', href: 'https://www.instagram.com/reel/DZsT_YtzTlN/', gorsel: '/ikiz-dingiller.jpg' },
   { tip: 'instagram', baslik: 'Mercy (with Can)', altYazi: 'Reels', href: 'https://www.instagram.com/reel/DY7RviRqkXL/', gorsel: '/mercy-can.jpg' },
 ]
 
@@ -17,8 +17,51 @@ const ROZET_STIL = {
 export default function Muzik() {
   const [link, setLink] = useState('')
   const [durum, setDurum] = useState('idle') // idle | gonderiliyor | tamam | zatenGonderildi | hata
+  const [istekler, setIstekler] = useState([])
+  const [yukleniyor, setYukleniyor] = useState(true)
 
   const zatenIstekVarMi = () => localStorage.getItem('pb_song_request_sent') === '1'
+
+  async function metaVeriGetir(spotifyLink) {
+    try {
+      const res = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(spotifyLink)}`)
+      if (!res.ok) return null
+      const data = await res.json()
+      return { baslik: data.title, gorsel: data.thumbnail_url }
+    } catch {
+      return null
+    }
+  }
+
+  async function isteklerGetir() {
+    if (!supabaseYapilandirildi) {
+      setYukleniyor(false)
+      return
+    }
+    try {
+      const { data } = await supabase
+        .from('song_requests')
+        .select('id,spotify_link,created_at')
+        .order('created_at', { ascending: false })
+        .limit(10)
+
+      const zenginlestirilmis = await Promise.all(
+        (data || []).map(async (istek) => {
+          const meta = await metaVeriGetir(istek.spotify_link)
+          return { ...istek, baslik: meta?.baslik || null, gorsel: meta?.gorsel || null }
+        })
+      )
+      setIstekler(zenginlestirilmis)
+    } catch {
+      /* sessizce geç */
+    } finally {
+      setYukleniyor(false)
+    }
+  }
+
+  useEffect(() => {
+    isteklerGetir()
+  }, [])
 
   async function istekGonder(e) {
     e.preventDefault()
@@ -37,6 +80,7 @@ export default function Muzik() {
       localStorage.setItem('pb_song_request_sent', '1')
       setDurum('tamam')
       setLink('')
+      isteklerGetir()
     } catch {
       setDurum('hata')
     }
@@ -133,6 +177,48 @@ export default function Muzik() {
               </p>
             )}
           </form>
+
+          <div className="mt-10">
+            <p className="font-mono text-[11px] text-on-surface-variant uppercase tracking-widest mb-3">
+              ▸ Gelen İstekler
+            </p>
+            {!supabaseYapilandirildi && (
+              <p className="font-mono text-xs text-on-surface-variant">
+                Supabase bağlanınca buradaki istekler görünecek.
+              </p>
+            )}
+            {supabaseYapilandirildi && yukleniyor && (
+              <p className="font-mono text-xs text-on-surface-variant">Yükleniyor...</p>
+            )}
+            {supabaseYapilandirildi && !yukleniyor && istekler.length === 0 && (
+              <p className="font-mono text-xs text-on-surface-variant">Henüz istek yok — ilk sen ol!</p>
+            )}
+            <div className="space-y-2 max-h-[420px] overflow-y-auto pr-2">
+              {istekler.map((istek, i) => (
+                <a
+                  key={istek.id}
+                  href={istek.spotify_link}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-3 bg-deep-navy/60 border border-electric-blue/30 px-3 py-2 hover:bg-electric-blue/10 hover:border-electric-blue transition-all group"
+                >
+                  <span className="font-mono text-xs text-electric-blue w-6 shrink-0">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <div className="w-9 h-9 shrink-0 bg-deep-navy border border-electric-blue/30 overflow-hidden flex items-center justify-center">
+                    {istek.gorsel ? (
+                      <img src={istek.gorsel} alt="" className="w-full h-full object-cover" loading="lazy" />
+                    ) : (
+                      <span className="material-symbols-outlined text-base text-electric-blue">music_note</span>
+                    )}
+                  </div>
+                  <span className="font-mono text-sm text-electric-blue truncate group-hover:text-success-cyan transition-colors">
+                    {istek.baslik || 'Spotify şarkısı'}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
