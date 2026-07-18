@@ -203,6 +203,7 @@ export const WARDROBE_ITEMS = {
     {
       "id": "acc_belt",
       "name": "Kemer",
+      "zIndex": 25,
       "image": "/assets/character/accessory/acc_belt.png",
       "transform": {
         "top": 41.2,
@@ -223,52 +224,22 @@ export const WARDROBE_ITEMS = {
     {
       "id": "acc_shoes_black",
       "name": "Siyah Spor Ayakkabı",
-      "zIndex": 10,
-      "layers": [
-        {
-          "label": "Sol",
-          "image": "/assets/character/accessory/acc_shoe_black_left.png",
-          "transform": {
-            "top": 89.2,
-            "left": 26,
-            "width": 22.3
-          }
-        },
-        {
-          "label": "Sağ",
-          "image": "/assets/character/accessory/acc_shoe_black_right.png",
-          "transform": {
-            "top": 89.2,
-            "left": 76.3,
-            "width": 22.3
-          }
-        }
-      ]
+      "image": "/assets/character/accessory/acc_shoes_black.png",
+      "transform": {
+        "top": 95,
+        "left": 50,
+        "width": 30
+      }
     },
     {
       "id": "acc_shoes_white",
       "name": "Beyaz Spor Ayakkabı",
-      "zIndex": 10,
-      "layers": [
-        {
-          "label": "Sol",
-          "image": "/assets/character/accessory/acc_shoe_white_left.png",
-          "transform": {
-            "top": 87.1,
-            "left": 25.2,
-            "width": 22.2
-          }
-        },
-        {
-          "label": "Sağ",
-          "image": "/assets/character/accessory/acc_shoe_white_right.png",
-          "transform": {
-            "top": 87.1,
-            "left": 74.6,
-            "width": 22.2
-          }
-        }
-      ]
+      "image": "/assets/character/accessory/acc_shoes_white.png",
+      "transform": {
+        "top": 94,
+        "left": 50,
+        "width": 30
+      }
     }
   ]
 };
