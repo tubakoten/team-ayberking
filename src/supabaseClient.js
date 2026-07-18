@@ -24,3 +24,9 @@ export const supabase = createClient(
 // This never exposes the admin password check on the client — the function
 // verifies it server-side against a secret only Supabase knows.
 export const ADMIN_LETTERS_FUNCTION_URL = `${supabaseUrl}/functions/v1/admin-letters`
+
+// Supabase'in API gateway'i artık edge function çağrılarında bir yetkilendirme
+// başlığı istiyor (apikey/anon key ile) — bu, bizim kendi şifre kontrolümüzden
+// AYRI bir platform seviyesi kontrol. Bu değeri fetch çağrılarında
+// Authorization/apikey header'ı olarak kullanıyoruz.
+export const SUPABASE_ANON_KEY_ICIN_HEADER = supabaseAnonKey || 'placeholder-anon-key'

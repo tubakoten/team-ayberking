@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ADMIN_LETTERS_FUNCTION_URL, supabaseYapilandirildi } from '../supabaseClient'
+import { ADMIN_LETTERS_FUNCTION_URL, SUPABASE_ANON_KEY_ICIN_HEADER, supabaseYapilandirildi } from '../supabaseClient'
 
 export default function Mektuplar({ letterCount }) {
   const [kilitAcik, setKilitAcik] = useState(false)
@@ -17,7 +17,11 @@ export default function Mektuplar({ letterCount }) {
     try {
       const res = await fetch(ADMIN_LETTERS_FUNCTION_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${SUPABASE_ANON_KEY_ICIN_HEADER}`,
+          apikey: SUPABASE_ANON_KEY_ICIN_HEADER,
+        },
         body: JSON.stringify({ action: 'list', password: sifre }),
       })
       if (res.status === 401) {
@@ -39,7 +43,11 @@ export default function Mektuplar({ letterCount }) {
     try {
       const res = await fetch(ADMIN_LETTERS_FUNCTION_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${SUPABASE_ANON_KEY_ICIN_HEADER}`,
+          apikey: SUPABASE_ANON_KEY_ICIN_HEADER,
+        },
         body: JSON.stringify({ action, password: sifre, id }),
       })
       if (!res.ok) return
