@@ -166,6 +166,17 @@ export default function MiniOyun() {
   }
 
   const basisZamaniRef = useRef(null)
+  const bekleyenTekZiplamaRef = useRef(null)
+  const CIFT_TIKLAMA_PENCERESI = 220 // ms — bu süre içinde ikinci dokunuş gelirse çift zıplama olur
+
+  function ziplaBaslat(miktar) {
+    const s = stateRef.current
+    if (!s || s.bitti || s.hopDurumu === 'devam' || s.olumAsamasi !== 'yok') return
+    s.hopMiktari = miktar
+    s.hopSuresi = hopSuresiHesapla(s.skor)
+    s.hopDurumu = 'devam'
+    s.hopBaslangicZamani = performance.now()
+  }
 
   function basisBaslat() {
     const s = stateRef.current
@@ -178,10 +189,31 @@ export default function MiniOyun() {
     if (!s || s.bitti || s.hopDurumu === 'devam' || s.olumAsamasi !== 'yok' || basisZamaniRef.current === null) return
     const tutulanSure = performance.now() - basisZamaniRef.current
     basisZamaniRef.current = null
-    s.hopMiktari = tutulanSure > BASILI_TUTMA_ESIGI ? 2 : 1
-    s.hopSuresi = hopSuresiHesapla(s.skor)
-    s.hopDurumu = 'devam'
-    s.hopBaslangicZamani = performance.now()
+
+    // Uzun basış: bekletmeden hemen çift zıplama.
+    if (tutulanSure > BASILI_TUTMA_ESIGI) {
+      if (bekleyenTekZiplamaRef.current) {
+        window.clearTimeout(bekleyenTekZiplamaRef.current)
+        bekleyenTekZiplamaRef.current = null
+      }
+      ziplaBaslat(2)
+      return
+    }
+
+    // Kısa dokunuş: az önce bekleyen bir tek-zıplama varsa, bu ikinci dokunuş
+    // demektir — çift tıklama algılandı, çift zıplamaya çeviriyoruz.
+    if (bekleyenTekZiplamaRef.current) {
+      window.clearTimeout(bekleyenTekZiplamaRef.current)
+      bekleyenTekZiplamaRef.current = null
+      ziplaBaslat(2)
+      return
+    }
+
+    // İlk kısa dokunuş — ikinci bir dokunuş gelir mi diye çok kısa bir süre bekle.
+    bekleyenTekZiplamaRef.current = window.setTimeout(() => {
+      bekleyenTekZiplamaRef.current = null
+      ziplaBaslat(1)
+    }, CIFT_TIKLAMA_PENCERESI)
   }
 
   async function oyunBitti(finalSkor) {
@@ -524,7 +556,7 @@ export default function MiniOyun() {
         Zıplayan <span className="text-electric-blue">Kurbağa</span>
       </h2>
       <p className="font-body text-sm mb-8 text-on-surface-variant">
-        Dünya sürekli sağdan sola akıyor, yavaş kalırsan ekranın gerisinde sürüklenirsin! Suyun ya da timsahın üstünden atlamak için <strong>basılı tut</strong> (çift zıpla). Düze inmek için kısa dokun. <strong>Çok hızlı olmalısın</strong>, çünkü skorun arttıkça gölün akıntısı şiddetlenecek!
+        Dünya sürekli sağdan sola akıyor, yavaş kalırsan ekranın gerisinde sürüklenirsin! Suyun ya da timsahın üstünden atlamak için <strong>basılı tut</strong> ya da <strong>çift dokun/tıkla</strong> (ikisi de çift zıplama yapar). Düze inmek için kısa (tek) dokun. <strong>Çok hızlı olmalısın</strong>, çünkü skorun arttıkça gölün akıntısı şiddetlenecek!
       </p>
 
       <div className="border-2 border-electric-blue bg-deep-navy/80 p-4">
@@ -621,7 +653,7 @@ export default function MiniOyun() {
         </div>
 
         <p className="font-mono text-xs text-on-surface-variant mt-3 text-center">
-          SPACE / ↑ / dokun = tek zıpla · basılı tut = çift zıpla
+          SPACE / ↑ / dokun = tek zıpla · basılı tut / çift dokun = çift zıpla
         </p>
       </div>
     </section>
