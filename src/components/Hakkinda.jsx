@@ -85,13 +85,18 @@ export default function Hakkinda({ letterCount }) {
           </p>
           <p className="font-body text-lg text-on-surface-variant leading-relaxed">
             Köz, Ahde Vefa, Ölüyorum Ah gibi şarkılarıyla tanınıyor; sahne enerjisi kadar
-            içtenliğiyle de sevilen bir isim. Sahne dışında ise bir iç mimarlık öğrencisi —
+            içtenliğiyle de sevilen bir isim. Sahne dışında ise bir iç mimarlık öğrencisi
             yaratıcılığını başka bir alanda da sürdürüyor.
           </p>
           <p className="font-body text-lg text-on-surface-variant leading-relaxed">
             Küçük bir not: kurbağaları çok seviyor (bu yüzden sitede bir kurbağa oyunu var,
             tesadüf değil ✦), en sevdiği sayı 8, Magic Ball bile ona gönderme.
           </p>
+
+          <div className="flex gap-8 pt-2 font-mono text-xs text-electric-blue">
+            <span>∞ Patiking</span>
+            <span>{letterCount ?? 0} Mektup</span>
+          </div>
 
           <div className="flex flex-wrap gap-3 pt-4">
             <a
