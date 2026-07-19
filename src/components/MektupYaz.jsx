@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { supabase, supabaseYapilandirildi } from '../supabaseClient'
 
+// Çok fazla mektup birikince, kod içinde tek bu satırı değiştirerek
+// mektup yazmayı geçici olarak kapatıp açabilirsin.
+const MEKTUP_YAZMA_ACIK = false
+
 export default function MektupYaz({ onMektupGonderildi }) {
   const [ad, setAd] = useState('')
   const [sosyal, setSosyal] = useState('')
@@ -65,7 +69,18 @@ export default function MektupYaz({ onMektupGonderildi }) {
         <div className="bg-deep-navy/80 backdrop-blur-sm border-2 border-electric-blue p-8 relative min-h-[420px]">
           <span className="absolute -top-3 -right-3 text-electric-blue text-3xl bg-deep-navy px-1">★</span>
 
-          {durum === 'ucuyor' ? (
+          {!MEKTUP_YAZMA_ACIK ? (
+            <div className="h-full flex flex-col items-center justify-center gap-4 py-16 text-center">
+              <span className="material-symbols-outlined text-4xl text-electric-blue">mail_lock</span>
+              <p className="font-display font-bold text-sm text-on-surface">
+                Mektup kutusu şu an kapalı ✦
+              </p>
+              <p className="font-body text-sm text-on-surface-variant max-w-xs">
+                Çok fazla mektup birikti, onaylama işlemini yetiştirebilmek için mektup
+                yazmayı geçici olarak kapattık. Yakında tekrar açılacak!
+              </p>
+            </div>
+          ) : durum === 'ucuyor' ? (
             <div className="h-full flex flex-col items-center justify-center gap-4 py-16">
               <div className="text-5xl animate-floating">✉️</div>
               <p className="font-display font-bold text-sm text-center text-on-surface">
