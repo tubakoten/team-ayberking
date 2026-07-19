@@ -7,11 +7,6 @@ const YUKSEKLIK = 220
 const FROG_H = 32
 const FROG_W = Math.round(FROG_H * (642 / 482))
 const LILY_ORAN = 568 / 464
-const PAD_ORANLARI = {
-  yaprak: 568 / 464,
-  yaprak2: 787 / 619,
-  lotus: 859 / 734,
-}
 const TIMSAH_ORAN = 1178 / 834
 const STEP_GENISLIK = 150
 const PAD_GORUNUR_GENISLIK = STEP_GENISLIK * 0.62
@@ -35,27 +30,20 @@ const bandTop = YER_Y + FROG_H
 const bandH = YUKSEKLIK - bandTop
 const merkezSabit = KURBAGA_SOL + FROG_W / 2
 
-function rastgeleYaprakGorseli() {
-  const r = Math.random()
-  if (r < 0.13) return 'lotus'
-  if (r < 0.5) return 'yaprak2'
-  return 'yaprak'
-}
-
 function ilkKareler() {
-  return [{ tip: 'kiyi' }, { tip: 'pad', gorsel: 'yaprak' }, { tip: 'pad', gorsel: 'yaprak' }, { tip: 'pad', gorsel: 'yaprak' }]
+  return [{ tip: 'kiyi' }, { tip: 'pad' }, { tip: 'pad' }, { tip: 'pad' }]
 }
 
 function sonrakiKare(kareler, skor) {
   const son = kareler[kareler.length - 1]
   if (son.tip === 'su' || son.tip === 'timsah') {
-    return { tip: 'pad', gorsel: rastgeleYaprakGorseli() } 
+    return { tip: 'pad' }
   }
   const tehlikeOlasiligi = Math.min(0.4, 0.14 + skor * 0.012)
   if (Math.random() < tehlikeOlasiligi) {
     return { tip: Math.random() < 0.35 ? 'timsah' : 'su' }
   }
-  return { tip: 'pad', gorsel: rastgeleYaprakGorseli() }
+  return { tip: 'pad' }
 }
 
 function kareleriGarantiEt(s) {
@@ -113,8 +101,6 @@ export default function MiniOyun() {
     resimlerRef.current = {
       kurbaga: resimYukle('/frog_sprite.png'),
       yaprak: resimYukle('/lily_pad.png'),
-      yaprak2: resimYukle('/yaprak_varyant2.png'),
-      lotus: resimYukle('/lotus_pembe.png'),
       timsah: resimYukle('/timsah.png'),
       mate: resimYukle('/mate_tea.png'),
     }
@@ -299,11 +285,10 @@ export default function MiniOyun() {
       })
     }
 
-    function yaprakCiz(cx, gorselAdi) {
-      const img = resimlerRef.current?.[gorselAdi || 'yaprak']
-      const oran = PAD_ORANLARI[gorselAdi] || LILY_ORAN
+    function yaprakCiz(cx) {
+      const img = resimlerRef.current?.yaprak
       const w = Math.min(PAD_GORUNUR_GENISLIK, bandH * 2)
-      const h = Math.min(w / oran, bandH)
+      const h = Math.min(w / LILY_ORAN, bandH)
       const cy = bandTop + bandH / 2
       const dx = cx - w / 2
       const dy = cy - h / 2
@@ -465,7 +450,7 @@ export default function MiniOyun() {
           if (kare.tip === 'kiyi') {
              kiyiCiz(ekranX - STEP_GENISLIK / 2, STEP_GENISLIK, s)
           } else if (kare.tip === 'pad') {
-             yaprakCiz(ekranX, kare.gorsel)
+             yaprakCiz(ekranX)
           } else if (kare.tip === 'timsah') {
              timsahCiz(ekranX)
           } else if (kare.tip === 'su' && i > s.mevcutIndex && i - s.mevcutIndex <= 2) {

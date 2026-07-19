@@ -1,24 +1,4 @@
-import { useState } from 'react'
-
-const fotograflar = [
-  '/ayberk.jpg',
-  '/ayberk-2.jpg',
-  '/ayberk-3.jpg',
-  '/ayberk-4.jpg',
-  '/ayberk-5.jpg',
-  '/ayberk-6.jpg',
-]
-
 export default function Hakkinda({ letterCount }) {
-  const [index, setIndex] = useState(0)
-
-  function onceki() {
-    setIndex((i) => (i - 1 + fotograflar.length) % fotograflar.length)
-  }
-  function sonraki() {
-    setIndex((i) => (i + 1) % fotograflar.length)
-  }
-
   return (
     <section id="hakkinda" className="max-w-5xl mx-auto px-6 py-24 relative z-10">
       <div className="grid md:grid-cols-2 gap-10 items-start">
@@ -29,40 +9,10 @@ export default function Hakkinda({ letterCount }) {
 
           <div className="relative border-2 border-electric-blue overflow-hidden aspect-[3/4] bg-deep-navy">
             <img
-              src={fotograflar[index]}
-              alt={`Ayberk Özay ${index + 1}`}
+              src="/ayberk.jpg"
+              alt="Ayberk Özay"
               className="w-full h-full object-cover object-top"
             />
-
-            {fotograflar.length > 1 && (
-              <>
-                <button
-                  onClick={onceki}
-                  aria-label="Önceki fotoğraf"
-                  className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-deep-navy/70 border border-electric-blue text-electric-blue hover:bg-electric-blue hover:text-deep-navy transition-colors z-20"
-                >
-                  <span className="material-symbols-outlined text-lg">chevron_left</span>
-                </button>
-                <button
-                  onClick={sonraki}
-                  aria-label="Sonraki fotoğraf"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-deep-navy/70 border border-electric-blue text-electric-blue hover:bg-electric-blue hover:text-deep-navy transition-colors z-20"
-                >
-                  <span className="material-symbols-outlined text-lg">chevron_right</span>
-                </button>
-
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
-                  {fotograflar.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setIndex(i)}
-                      aria-label={`${i + 1}. fotoğrafa git`}
-                      className={`w-1.5 h-1.5 rounded-full transition-colors ${i === index ? 'bg-electric-blue' : 'bg-electric-blue/30'}`}
-                    />
-                  ))}
-                </div>
-              </>
-            )}
           </div>
 
           <div className="absolute -bottom-4 right-4 bg-deep-navy border border-electric-blue px-3 py-1 z-10">
