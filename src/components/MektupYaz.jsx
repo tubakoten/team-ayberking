@@ -3,7 +3,7 @@ import { supabase, supabaseYapilandirildi } from '../supabaseClient'
 
 // Çok fazla mektup birikince, kod içinde tek bu satırı değiştirerek
 // mektup yazmayı geçici olarak kapatıp açabilirsin.
-const MEKTUP_YAZMA_ACIK = false
+const MEKTUP_YAZMA_ACIK = true
 
 export default function MektupYaz({ onMektupGonderildi }) {
   const [ad, setAd] = useState('')
@@ -12,7 +12,7 @@ export default function MektupYaz({ onMektupGonderildi }) {
   const [durum, setDurum] = useState('form') // form | gonderiliyor | ucuyor | hata
 
   const adGecerli = ad.trim().length >= 2 && ad.trim().length <= 40
-  const mesajGecerli = mesaj.trim().length >= 20 && mesaj.trim().length <= 2000
+  const mesajGecerli = mesaj.trim().length >= 20 && mesaj.trim().length <= 1000
 
   async function gonder(e) {
     e.preventDefault()
@@ -138,13 +138,13 @@ export default function MektupYaz({ onMektupGonderildi }) {
                     onChange={(e) => setMesaj(e.target.value)}
                     placeholder="Mesajını buraya yaz..."
                     rows={6}
-                    maxLength={2000}
+                    maxLength={1000}
                     className="w-full bg-transparent border-0 border-b border-electric-blue focus:ring-0 pl-6 py-2 font-mono text-sm resize-none text-on-surface"
                   />
                 </div>
                 <div className="flex justify-between mt-2 font-mono text-[10px] text-on-surface-variant">
                   <span>min 20</span>
-                  <span>{mesaj.length} / 2000</span>
+                  <span>{mesaj.length} / 1000</span>
                 </div>
                 {mesaj.length > 0 && !mesajGecerli && (
                   <p className="font-mono text-xs text-error-red mt-1">
